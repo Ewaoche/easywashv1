@@ -37,7 +37,7 @@ const registerController = asyncHandler(async(req, res, next) => {
     <p>Best regards!</p>`;
 
 
-    // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
