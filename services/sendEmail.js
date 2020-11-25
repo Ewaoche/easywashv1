@@ -10,13 +10,13 @@ const sendEmail = async(options) => {
             pass: process.env.SMTP_PASSWORD,
         },
     });
-
     // send mail with defined transport object
     const message = {
         from: `${process.env.FROM_NAME}  <${process.env.FROM_EMAIL}>`,
         to: options.email,
         subject: options.subject,
         text: options.message
+
     };
 
     const info = await transporter.sendMail(message)
