@@ -2,8 +2,10 @@ const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
-const sendEmail = require('../services/sendEmail');
+// const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer");
+// const User = require('../models/User');
 
 
 
@@ -23,36 +25,52 @@ const registerController = asyncHandler(async(req, res, next) => {
     // Check for user
     let user = await User.findOne({ email }).select('+password');
     if (user) {
-        return next(new ErrorResponse('please this email already exist', 401));
+        return next(new ErrorResponse('please this email already exist use another', 401));
     }
 
     //Create activation token
     const activationToken = jwt.sign({ name, email, password, role }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
-    const message = `
+    const messages = `
     <h1>Please use the following to activate your account</h1>
     <a>${req.protocol}://${req.get('host')}/api/v1/auth/activation/${activationToken}</a>
     <p>This email may contain sensetive information</p>,
     <p>Best regards!</p>`;
 
 
-    // Call sendEmail from utill
-    try {
-        await sendEmail({
-            email: email,
-            subject: 'Account activation link',
-            message: message
-        });
-        // console.log(message);
-        res.status(200).json({
-            success: true,
-            data: `Email has been Sent to ${email} `
-        });
-    } catch (err) {
+    // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        // port: process.env.SMTP_PORT,
+        // service: 'Gmail',
+        auth: {
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD
+        },
+    });
 
-        return next(new ErrorResponse('oop! Account activation link could not be sent', 500))
+    const message = {
+        from: process.env.SMTP_EMAIL,
+        to: email,
+        subject: 'Account activation link',
+        text: messages
+
 
     };
+
+    transporter.sendMail(message, function(err, success) {
+        if (err) {
+            console.log('error occured: !', err);
+        } else {
+            console.log('email sent !');
+
+        }
+
+    })
+    return res.status(200).json({
+        message: 'email sent'
+    })
+
 
 });
 
