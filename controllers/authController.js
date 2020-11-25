@@ -242,6 +242,19 @@ const resetPasswordController = asyncHandler(async(req, res, next) => {
 });
 
 
+//@desc  Get Current Loggedin users
+//route POST /api/v1/auth/me
+// Access Private
+
+const getMeController = asyncHandler(async(req, res, next) => {
+    const user = await User.findById(req.user.id);
+    res.status(200).json({
+        success: true,
+        data: user
+    });
+});
+
+
 
 module.exports = {
     registerController,
@@ -249,6 +262,7 @@ module.exports = {
     forgotPasswordController,
     activationController,
     resetPasswordController,
-    logoutController
+    logoutController,
+    getMeController
 
 };
