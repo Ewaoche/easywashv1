@@ -181,6 +181,12 @@ const logoutController = asyncHandler(async(req, res, next) => {
 // Access Public
 
 const forgotPasswordController = asyncHandler(async(req, res, next) => {
+    const { email } = req.body;
+    // Validate emil & password
+    if (!email) {
+        return next(new ErrorResponse('Please provide an email', 400));
+    }
+
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
         return next(new ErrorResponse('There is no user with this email !', 404))
