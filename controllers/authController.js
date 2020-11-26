@@ -2,10 +2,9 @@ const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
-// const sendEmail = require('../services/sendEmail');
+const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
-// const User = require('../models/User');
 
 
 
@@ -37,12 +36,9 @@ const registerController = asyncHandler(async(req, res, next) => {
     <p>Best regards!</p>`;
 
 
-    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
-        // port: process.env.SMTP_PORT,
-        // service: 'Gmail',
         auth: {
             user: process.env.SMTP_EMAIL,
             pass: process.env.SMTP_PASSWORD
