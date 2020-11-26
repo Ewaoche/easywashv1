@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
-const sendEmail = require('../services/sendEmail');
+// const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
 
@@ -196,34 +196,46 @@ const forgotPasswordController = asyncHandler(async(req, res, next) => {
 
     //Create reset Url
     const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
-    const message = `You are receiving this message because you (or someone ) made a request for reset poassword
-             Please make a put request to : \n\n ${resetUrl}`;
+    const messages = `You are receiving this message because you (or someone ) made a request for reset poassword
+             Please click on the link to reset your password : \n\n ${resetUrl}`;
 
     // Call sendEmail from utill
-    try {
-        await sendEmail({
-            email: user.email,
-            subject: 'Password Reset',
-            message: message
-        });
-        res.status(200).json({
-            success: true,
-            data: `Password reset Email link has been sent to ${email}`
-        });
-    } catch (err) {
-        // console.log(err);
-        user.getResetPasswordToken = undefined;
-        user.resetPasswordExpire = undefined;
 
-        await user.save({ validateBeforeSave: false });
-
-        return next(new ErrorResponse('oop! Password reset Email could not be sent', 500))
-
-    }
-    res.status(200).json({
-        success: true,
-        data: user
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD
+        },
     });
+
+    const message = {
+        from: process.env.SMTP_EMAIL,
+        to: email,
+        subject: 'Reset Password link',
+        text: messages
+
+
+    };
+
+    transporter.sendMail(message, function(err, success) {
+        if (err) {
+            // console.log(err);
+            user.getResetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+
+            user.save({ validateBeforeSave: false });
+
+            return next(new ErrorResponse('oop! Password reset Email could not be sent', 500))
+        } else {
+            return res.status(200).json({
+                success: true,
+                data: `Password reset Email link has been sent to ${email}`
+            });
+        }
+
+    })
+
 });
 
 
