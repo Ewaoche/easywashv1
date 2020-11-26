@@ -56,14 +56,21 @@ const registerController = asyncHandler(async(req, res, next) => {
 
     transporter.sendMail(message, function(err, success) {
         if (err) {
-            console.log('error occured: !', err);
+            return res.status(200).json({
+                sucess: false,
+                message: 'email could not be send'
+            })
         } else {
-            console.log('email sent !');
+            return res.status(200).json({
+                sucess: true,
+                message: 'email sent'
+            })
 
         }
 
     })
     return res.status(200).json({
+        sucess: true,
         message: 'email sent'
     })
 
@@ -156,7 +163,6 @@ const activationController = asyncHandler(async(req, res, next) => {
         data: user
     });
 
-    // sendTokenResponse(user, 200, res);
 
 });
 
