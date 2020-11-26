@@ -38,7 +38,7 @@ const sendEmail = async(options) => {
         // service: 'Gmail',
         auth: {
             user: process.env.SMTP_EMAIL,
-            pass: process.env.SMTP_PASSWORD,
+            pass: process.env.SMTP_PASSWORD
         },
     });
     // send mail with defined transport object
