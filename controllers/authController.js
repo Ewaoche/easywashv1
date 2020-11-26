@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
-const sendEmail = require('../services/sendEmail');
+// const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
 
