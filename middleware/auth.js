@@ -17,17 +17,17 @@ exports.protect = asyncHandler(async(req, res, next) => {
     // token = req.cookies.token;
     // }
     if (!token) {
-        return next(new ErrorResponse('You are Authorized for this route', 401));
+        return next(new ErrorResponse('You are not Authorized for this route', 401));
     }
 
     //Verify token
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded);
+        // console.log(decoded);
         req.user = await User.findById(decoded.id);
         next();
     } catch (err) {
-        return next(new ErrorResponse('You are Authorized for this route', 401));
+        return next(new ErrorResponse('You are not Authorized for this route', 401));
 
     }
 });

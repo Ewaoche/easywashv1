@@ -22,6 +22,12 @@ UserSchma = new mongoose.Schema({
         enum: ['user', 'vendor']
 
     },
+
+    isVerify: {
+        type: Boolean,
+        default: false
+    },
+
     password: {
         type: String,
         required: [true, 'Please add a password'],
@@ -32,10 +38,16 @@ UserSchma = new mongoose.Schema({
     resetPasswordExpire: Date,
     createdAt: {
         type: Date,
-        default: Date.now
+        // default: Date.now
+        default: moment()
     }
 
 });
+
+//Custom Date
+UserSchma.method("getCreatedDate", () => {
+    return moment().format("dddd Do MMMM YYYY")
+})
 
 //Encrypt password using bcrypt
 UserSchma.pre('save', async function(next) {

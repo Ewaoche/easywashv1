@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 // const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
@@ -78,6 +79,25 @@ const registerController = asyncHandler(async(req, res, next) => {
 });
 
 
+const register = asyncHandler(async(req, res, next) => {
+    const { name, email, password, role } = req.body;
+    //Create User
+    const user = await User.create({
+        name,
+        email,
+        password,
+        role
+    });
+
+    // Create Token 
+    // const token = user.getSignedJwtToken();
+    // const createdDate = user.getCreatedDate();
+
+    // res.status(200).json({ success: true, token: token, data: user });
+    sendTokenResponse(user, 200, res);
+
+});
+
 //@desc   Login users
 //route POST /api/v1/auth/login
 // Access Public
@@ -107,32 +127,6 @@ const loginController = asyncHandler(async(req, res, next) => {
 });
 
 
-// Get token from model, create cookie and send response
-const sendTokenResponse = (user, statusCode, res) => {
-    // Create token
-    const token = user.getSignedJwtToken();
-
-    const options = {
-        expires: new Date(
-            Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-        ),
-        httpOnly: true
-    };
-
-    if (process.env.NODE_ENV === 'production') {
-        options.secure = true;
-    }
-
-    res
-        .status(statusCode)
-        .cookie('token', token, options)
-        .json({
-            success: true,
-            token,
-            user
-        });
-};
-
 
 //@desc   Activate  users 
 //route POST /api/v1/auth/activation
@@ -148,14 +142,21 @@ const activationController = asyncHandler(async(req, res, next) => {
     const activation = jwt.verify(activationToken, process.env.ACTIVE_SECRET);
 
     const { name, email, password, role } = activation;
+    let user = await User.findOne({ email }).select('+password');
 
+    if (user.isVerify) {
+        return res.status(400).json({ error_msg: 'You already verified' });
+    }
 
     // Create user
+    // user.isVerify = true;
+
     user = await User.create({
         name,
         email,
         password,
-        role
+        role,
+        isVerify: true
     });
     res.status(200).json({
         success: true,
@@ -293,6 +294,34 @@ const getMeController = asyncHandler(async(req, res, next) => {
 });
 
 
+// Get token from model, create cookie and send response
+const sendTokenResponse = (user, statusCode, res) => {
+    // Create token
+    const token = user.getSignedJwtToken();
+
+    const options = {
+        expires: new Date(
+            Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+        ),
+        httpOnly: true
+    };
+
+    if (process.env.NODE_ENV === 'production') {
+        options.secure = true;
+    }
+
+    res
+        .status(statusCode)
+        .cookie('token', token, options)
+        .json({
+            success: true,
+            token,
+            user
+        });
+};
+
+
+
 
 module.exports = {
     registerController,
@@ -301,6 +330,7 @@ module.exports = {
     activationController,
     resetPasswordController,
     logoutController,
-    getMeController
+    getMeController,
+    register
 
 };
