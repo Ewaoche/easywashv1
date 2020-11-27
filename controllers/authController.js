@@ -118,7 +118,13 @@ const register = asyncHandler(async(req, res, next) => {
     };
 
     try {
-        transporter.sendMail(message, (err, success) => {
+        transporter.sendMail(message, function(err, success) {
+            if (err) {
+                return res.status(200).json({
+                    success: true,
+                    message: `Account activation could not be send to ${email}`
+                });
+            }
             if (success) {
                 return res.status(200).json({
                     success: true,
@@ -140,9 +146,6 @@ const register = asyncHandler(async(req, res, next) => {
         password,
         role
     });
-
-
-
 
 
     // Create Token 
