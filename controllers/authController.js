@@ -14,18 +14,80 @@ const nodemailer = require("nodemailer");
 //route POST /api/v1/auth/register
 // Access Public
 
-const registerController = asyncHandler(async(req, res, next) => {
+// const registerController = asyncHandler(async(req, res, next) => {
+//     const { name, email, password, role } = req.body;
+
+//     // Validate submited data
+//     if (!name || !email || !password || !role) {
+//         return next(new ErrorResponse('Please provide an email, name, role  and password', 400));
+//     }
+
+//     // Check for user
+//     let user = await User.findOne({ email }).select('+password');
+//     if (user) {
+//         return next(new ErrorResponse('please this email already exist use another', 401));
+//     }
+
+//     //Create activation token
+//     const activationToken = jwt.sign({ name, email, password, role }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
+//     const messages = `
+//     <h1>Please use the following to activate your account</h1>
+//     <a>${req.protocol}://${req.get('host')}/api/v1/auth/activation/${activationToken}</a>
+//     <p>This email may contain sensetive information</p>,
+//     <p>Best regards!</p>`;
+
+
+
+//     const transporter = nodemailer.createTransport({
+//         service: 'gmail',
+//         auth: {
+//             user: process.env.SMTP_EMAIL,
+//             pass: process.env.SMTP_PASSWORD
+//         },
+//     });
+
+//     const message = {
+//         from: process.env.SMTP_EMAIL,
+//         to: email,
+//         subject: 'Account activation link',
+//         text: messages
+
+
+//     };
+
+//     transporter.sendMail(message, function(err, success) {
+//         if (err) {
+//             return res.status(200).json({
+//                 sucess: false,
+//                 message: 'email could not be send'
+//             })
+//         } else {
+//             return res.status(200).json({
+//                 sucess: true,
+//                 message: 'email sent'
+//             })
+
+//         }
+
+//     })
+//     return res.status(200).json({
+//         sucess: true,
+//         message: 'email sent'
+//     })
+
+
+// });
+
+
+//@desc   Register users
+//route POST /api/v1/auth/register
+// Access Public
+const register = asyncHandler(async(req, res, next) => {
     const { name, email, password, role } = req.body;
 
-    // Validate submited data
-    if (!name || !email || !password || !role) {
-        return next(new ErrorResponse('Please provide an email, name, role  and password', 400));
-    }
-
-    // Check for user
     let user = await User.findOne({ email }).select('+password');
     if (user) {
-        return next(new ErrorResponse('please this email already exist use another', 401));
+        return next(new ErrorResponse('please this email already exist', 401));
     }
 
     //Create activation token
@@ -55,32 +117,22 @@ const registerController = asyncHandler(async(req, res, next) => {
 
     };
 
-    transporter.sendMail(message, function(err, success) {
-        if (err) {
-            return res.status(200).json({
-                sucess: false,
-                message: 'email could not be send'
-            })
-        } else {
-            return res.status(200).json({
-                sucess: true,
-                message: 'email sent'
-            })
+    try {
+        transporter.sendMail(message, (err, success) => {
+            if (success) {
+                return res.status(200).json({
+                    success: true,
+                    message: `Account activation link has been sent to ${email}`
+                });
+            }
+        });
+    } catch (err) {
+        return res.status(200).json({
+            success: false,
+            message: `Account activation link unable to be sent to ${email}`
+        });
+    }
 
-        }
-
-    })
-    return res.status(200).json({
-        sucess: true,
-        message: 'email sent'
-    })
-
-
-});
-
-
-const register = asyncHandler(async(req, res, next) => {
-    const { name, email, password, role } = req.body;
     //Create User
     const user = await User.create({
         name,
@@ -88,6 +140,10 @@ const register = asyncHandler(async(req, res, next) => {
         password,
         role
     });
+
+
+
+
 
     // Create Token 
     // const token = user.getSignedJwtToken();
