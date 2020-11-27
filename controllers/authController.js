@@ -82,7 +82,7 @@ const nodemailer = require("nodemailer");
 //@desc   Register users
 //route POST /api/v1/auth/register
 // Access Public
-const register = asyncHandler(async(req, res, next) => {
+const registerController = asyncHandler(async(req, res, next) => {
     const { name, email, password, role } = req.body;
 
     let user = await User.findOne({ email }).select('+password');
@@ -113,34 +113,21 @@ const register = asyncHandler(async(req, res, next) => {
         to: email,
         subject: 'Account activation link',
         text: messages
-
-
     };
 
-    try {
-        transporter.sendMail(message, function(err, success) {
-            if (err) {
-                return res.status(200).json({
-                    success: true,
-                    message: `Account activation could not be send to ${email}`
-                });
-            }
-            if (success) {
-                return res.status(200).json({
-                    success: true,
-                    message: `Account activation link has been sent to ${email}`
-                });
-            }
-        });
-    } catch (err) {
-        return res.status(200).json({
-            success: false,
-            message: `Account activation link unable to be sent to ${email}`
-        });
-    }
+
+    transporter.sendMail(message, function(err, success) {
+        if (err) {
+            return res.status(200).json({
+                success: true,
+                message: `Account activation could not be send to ${email}`
+            });
+        }
+    });
+
 
     //Create User
-    const user = await User.create({
+    user = await User.create({
         name,
         email,
         password,
@@ -152,8 +139,12 @@ const register = asyncHandler(async(req, res, next) => {
     // const token = user.getSignedJwtToken();
     // const createdDate = user.getCreatedDate();
 
-    // res.status(200).json({ success: true, token: token, data: user });
-    sendTokenResponse(user, 200, res);
+    return res.status(200).json({
+        success: true,
+        message: `Account activation link has been sent to ${email}`,
+        data: user
+    });
+    // sendTokenResponse(user, 200, res);
 
 });
 
@@ -217,9 +208,9 @@ const activationController = asyncHandler(async(req, res, next) => {
         role,
         isVerify: true
     });
-    res.status(200).json({
+    return res.status(200).json({
         success: true,
-        message: 'You are successfully registered',
+        message: 'Your account has been verify successfully ',
         data: user
     });
 
@@ -383,13 +374,13 @@ const sendTokenResponse = (user, statusCode, res) => {
 
 
 module.exports = {
-    registerController,
+    // registerController,
     loginController,
     forgotPasswordController,
     activationController,
     resetPasswordController,
     logoutController,
     getMeController,
-    register
+    registerController
 
 };
