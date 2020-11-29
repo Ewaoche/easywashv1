@@ -6,82 +6,12 @@ const User = require('../models/User');
 // const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
-
-
-
+const { exit } = require('process');
 
 //@desc   Register users
 //route POST /api/v1/auth/register
 // Access Public
 
-// const registerController = asyncHandler(async(req, res, next) => {
-//     const { name, email, password, role } = req.body;
-
-//     // Validate submited data
-//     if (!name || !email || !password || !role) {
-//         return next(new ErrorResponse('Please provide an email, name, role  and password', 400));
-//     }
-
-//     // Check for user
-//     let user = await User.findOne({ email }).select('+password');
-//     if (user) {
-//         return next(new ErrorResponse('please this email already exist use another', 401));
-//     }
-
-//     //Create activation token
-//     const activationToken = jwt.sign({ name, email, password, role }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
-//     const messages = `
-//     <h1>Please use the following to activate your account</h1>
-//     <a>${req.protocol}://${req.get('host')}/api/v1/auth/activation/${activationToken}</a>
-//     <p>This email may contain sensetive information</p>,
-//     <p>Best regards!</p>`;
-
-
-
-//     const transporter = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//             user: process.env.SMTP_EMAIL,
-//             pass: process.env.SMTP_PASSWORD
-//         },
-//     });
-
-//     const message = {
-//         from: process.env.SMTP_EMAIL,
-//         to: email,
-//         subject: 'Account activation link',
-//         text: messages
-
-
-//     };
-
-//     transporter.sendMail(message, function(err, success) {
-//         if (err) {
-//             return res.status(200).json({
-//                 sucess: false,
-//                 message: 'email could not be send'
-//             })
-//         } else {
-//             return res.status(200).json({
-//                 sucess: true,
-//                 message: 'email sent'
-//             })
-
-//         }
-
-//     })
-//     return res.status(200).json({
-//         sucess: true,
-//         message: 'email sent'
-//     })
-
-
-// });
-
-
-//@desc   Register users
-//route POST /api/v1/auth/register
-// Access Public
 const registerController = asyncHandler(async(req, res, next) => {
     const { name, email, password, role } = req.body;
 
@@ -98,8 +28,6 @@ const registerController = asyncHandler(async(req, res, next) => {
     <p>This email may contain sensetive information</p>,
     <p>Best regards!</p>`;
 
-
-
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -115,16 +43,16 @@ const registerController = asyncHandler(async(req, res, next) => {
         text: messages
     };
 
-
     transporter.sendMail(message, function(err, success) {
         if (err) {
             return res.status(200).json({
-                success: true,
-                message: `Account activation could not be send to ${email}`
+                success: false,
+                message: `Account activation could not be send to ${email}`,
+
             });
         }
-    });
 
+    });
 
     //Create User
     user = await User.create({
@@ -166,16 +94,20 @@ const loginController = asyncHandler(async(req, res, next) => {
         return next(new ErrorResponse('Invalid credentials', 401));
     }
 
+
     // Check if password matches
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
         return next(new ErrorResponse('Invalid credentials', 401));
     }
+    if (!user.isVerify) {
+        return next(new ErrorResponse('Your account is not verify yet ', 401));
+
+    }
 
     sendTokenResponse(user, 200, res);
 });
-
 
 
 //@desc   Activate  users 
@@ -199,15 +131,19 @@ const activationController = asyncHandler(async(req, res, next) => {
     }
 
     // Create user
-    // user.isVerify = true;
+    user.isVerify = true;
+    user = await user.save();
 
-    user = await User.create({
-        name,
-        email,
-        password,
-        role,
-        isVerify: true
-    });
+    // user = await User.create({
+    //     name,
+    //     email,
+    //     password,
+    //     role,
+    //     isVerify: true
+    // });
+
+
+
     return res.status(200).json({
         success: true,
         message: 'Your account has been verify successfully ',
@@ -262,8 +198,6 @@ const forgotPasswordController = asyncHandler(async(req, res, next) => {
     const messages = `You are receiving this message because you (or someone ) made a request for reset poassword
              Please click on the link to reset your password : \n\n ${resetUrl}`;
 
-    // Call sendEmail from utill
-
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -277,7 +211,6 @@ const forgotPasswordController = asyncHandler(async(req, res, next) => {
         to: email,
         subject: 'Reset Password link',
         text: messages
-
 
     };
 
@@ -370,11 +303,7 @@ const sendTokenResponse = (user, statusCode, res) => {
         });
 };
 
-
-
-
 module.exports = {
-    // registerController,
     loginController,
     forgotPasswordController,
     activationController,
@@ -382,5 +311,4 @@ module.exports = {
     logoutController,
     getMeController,
     registerController
-
 };
