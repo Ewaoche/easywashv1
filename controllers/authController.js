@@ -20,7 +20,7 @@ const registerController = asyncHandler(async(req, res, next) => {
     }
 
     //Create activation token
-    const activationToken = jwt.sign({ user: user._id }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
+    const activationToken = jwt.sign({ name, email, password, role }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
     const messages = `
     <h1>Please use the following to activate your account</h1>
     <a>${req.protocol}://${req.get('host')}/api/v1/auth/activation/${activationToken}</a>
@@ -86,17 +86,21 @@ const registerController = asyncHandler(async(req, res, next) => {
 const resendactivetokenController = asyncHandler(async(req, res) => {
     const { email } = req.body;
     if (!email) {
-        return next(new ErrorResponse('please provide your email address'));
+        return res.status(400).json({ success: false, error_msg: 'please provide your email' });
     }
     const user = await User.findOne({ email });
-    if (user.isVerify) {
-        return next(new ErrorResponse('Your account is already verified go to login !'));
-    }
+
+
     if (!user) {
-        return next(new ErrorResponse('please provide your email address'));
+        return res.status(400).json({ success: false, error_msg: 'this email does not exist in the database' });
+
+    }
+    const { name, password, role } = user;
+    if (user.isVerify) {
+        return res.status(400).json({ success: false, error_msg: 'Your account is already verified go to login' });
     }
     //Create activation token
-    const activationToken = jwt.sign({ user: user._id }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
+    const activationToken = jwt.sign({ name, email, password, role }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
     const messages = `
      <h1>Please use the following to activate your account</h1>
      <a>${req.protocol}://${req.get('host')}/api/v1/auth/activation/${activationToken}</a>
@@ -183,11 +187,11 @@ const activationController = asyncHandler(async(req, res, next) => {
     }
     const activation = jwt.verify(activationToken, process.env.ACTIVE_SECRET);
 
-    const { name, email, password, role } = activation;
+    const { email } = activation;
     let user = await User.findOne({ email }).select('+password');
 
     if (user.isVerify) {
-        return res.status(400).json({ error_msg: 'You already verified' });
+        return res.status(400).json({ success: false, error_msg: 'You already verified' });
     }
 
     // Create user
