@@ -20,7 +20,7 @@ const registerController = asyncHandler(async(req, res, next) => {
     }
 
     //Create activation token
-    const activationToken = jwt.sign({ name, email, password, role }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
+    const activationToken = jwt.sign({ user: user._id }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
     const messages = `
     <h1>Please use the following to activate your account</h1>
     <a>${req.protocol}://${req.get('host')}/api/v1/auth/activation/${activationToken}</a>
@@ -76,7 +76,62 @@ const registerController = asyncHandler(async(req, res, next) => {
         role: user.role
 
     });
-    // sendTokenResponse(user, 200, res);
+
+});
+
+//@desc   Resend Verification Token
+//route POST /api/v1/auth/resendactivationtoken
+// Access Public
+
+const resendactivetokenController = asyncHandler(async(req, res) => {
+    if (!email) {
+        return next(new ErrorResponse('please provide your email address'));
+    }
+    const user = await User.findOne({ email });
+    if (user.isVerify) {
+        return next(new ErrorResponse('Your account is already verified go to login !'));
+    }
+    if (!user) {
+        return next(new ErrorResponse('please provide your email address'));
+    }
+    //Create activation token
+    const activationToken = jwt.sign({ user: user._id }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
+    const messages = `
+     <h1>Please use the following to activate your account</h1>
+     <a>${req.protocol}://${req.get('host')}/api/v1/auth/activation/${activationToken}</a>
+     <p>This email may contain sensetive information</p>,
+     <p>Best regards!</p>`;
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD
+        },
+    });
+
+    const message = {
+        from: process.env.SMTP_EMAIL,
+        to: email,
+        subject: 'Account activation link',
+        text: messages
+    };
+
+    transporter.sendMail(message, function(err, success) {
+        if (err) {
+            return res.status(200).json({
+                success: false,
+                message: `Account activation could not be send to ${email}`,
+
+            });
+        }
+
+    });
+
+    res.status(200).json({
+        success: true,
+        message: `Account activation has been send to ${email} again !`
+    });
 
 });
 
@@ -307,5 +362,6 @@ module.exports = {
     resetPasswordController,
     logoutController,
     getMeController,
-    registerController
+    registerController,
+    resendactivetokenController
 };
