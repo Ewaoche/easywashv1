@@ -83,21 +83,21 @@ const registerController = asyncHandler(async(req, res, next) => {
 //route POST /api/v1/auth/resendactivationtoken
 // Access Public
 
-const resendactivetokenController = asyncHandler(async(req, res) => {
+const resendactivetokenController = asyncHandler(async(req, res, next) => {
     const { email } = req.body;
     if (!email) {
-        return res.status(400).json({ success: false, error_msg: 'please provide your email' });
+        return res.status(400).json({ success: false, message: 'please provide your email' });
     }
     const user = await User.findOne({ email });
 
 
     if (!user) {
-        return res.status(400).json({ success: false, error_msg: 'this email does not exist in the database' });
+        return res.status(400).json({ success: false, message: 'this email does not exist in the database' });
 
     }
     const { name, password, role } = user;
     if (user.isVerify) {
-        return res.status(400).json({ success: false, error_msg: 'Your account is already verified go to login' });
+        return res.status(400).json({ success: false, message: 'Your account is already verified go to login' });
     }
     //Create activation token
     const activationToken = jwt.sign({ name, email, password, role }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
@@ -191,7 +191,7 @@ const activationController = asyncHandler(async(req, res, next) => {
     let user = await User.findOne({ email }).select('+password');
 
     if (user.isVerify) {
-        return res.status(400).json({ success: false, error_msg: 'You already verified' });
+        return res.status(400).json({ success: false, message: 'You already verified' });
     }
 
     // Create user
@@ -283,7 +283,7 @@ const forgotPasswordController = asyncHandler(async(req, res, next) => {
         } else {
             return res.status(200).json({
                 success: true,
-                data: `Password reset Email link has been sent to ${email}`
+                message: `Password reset Email link has been sent to ${email}`
             });
         }
 
