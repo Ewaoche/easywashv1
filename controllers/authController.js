@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 // const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
@@ -70,7 +69,12 @@ const registerController = asyncHandler(async(req, res, next) => {
     return res.status(200).json({
         success: true,
         message: `Account activation link has been sent to ${email}`,
-        data: user
+        // data: user
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+
     });
     // sendTokenResponse(user, 200, res);
 
@@ -134,20 +138,14 @@ const activationController = asyncHandler(async(req, res, next) => {
     user.isVerify = true;
     user = await user.save();
 
-    // user = await User.create({
-    //     name,
-    //     email,
-    //     password,
-    //     role,
-    //     isVerify: true
-    // });
-
-
-
     return res.status(200).json({
         success: true,
         message: 'Your account has been verify successfully ',
-        data: user
+        // data: user
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
     });
 
 
@@ -211,7 +209,6 @@ const forgotPasswordController = asyncHandler(async(req, res, next) => {
         to: email,
         subject: 'Reset Password link',
         text: messages
-
     };
 
     transporter.sendMail(message, function(err, success) {
