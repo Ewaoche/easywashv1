@@ -84,6 +84,7 @@ const registerController = asyncHandler(async(req, res, next) => {
 // Access Public
 
 const resendactivetokenController = asyncHandler(async(req, res) => {
+    const { email } = req.body;
     if (!email) {
         return next(new ErrorResponse('please provide your email address'));
     }
