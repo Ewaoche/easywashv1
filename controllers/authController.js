@@ -79,7 +79,7 @@ const registerController = asyncHandler(async(req, res, next) => {
 
 });
 
-//@desc   Resend Verification Token
+//@desc   Resend Verification Token 
 //route POST /api/v1/auth/resendactivationtoken
 // Access Public
 
