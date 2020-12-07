@@ -58,23 +58,23 @@ UserSchema = new mongoose.Schema({
         required: [true, ['please provide address']]
     },
 
-    location: {
-        // GeoJSON Point
-        type: {
-            type: String,
-            enum: ['Point']
-        },
-        coordinates: {
-            type: [Number],
-            index: '2dsphere'
-        },
-        formattedAddress: String,
-        street: String,
-        city: String,
-        state: String,
-        zipcode: String,
-        country: String
-    },
+    // location: {
+    //     // GeoJSON Point
+    //     type: {
+    //         type: String,
+    //         enum: ['Point']
+    //     },
+    //     coordinates: {
+    //         type: [Number],
+    //         index: '2dsphere'
+    //     },
+    //     formattedAddress: String,
+    //     street: String,
+    //     city: String,
+    //     state: String,
+    //     zipcode: String,
+    //     country: String
+    // },
 
 
 
@@ -104,26 +104,27 @@ UserSchema = new mongoose.Schema({
 
 
 //Geocode and create loaction field
-UserSchema.pre('save', async function(next) {
-    const loc = await geocoder.geocode(this.address);
-    this.location = {
-            type: 'Point',
-            coordinates: [loc[0].longitude, loc[0].latitude],
-            formattedAddress: loc[0].formattedAddress,
-            street: loc[0].streetName,
-            city: loc[0].city,
-            state: loc[0].stateCode,
-            zipcode: loc[0].zipcode,
-            country: loc[0].countryCode
 
-        },
+// UserSchema.pre('save', async function(next) {
+//     const loc = await geocoder.geocode(this.address);
+//     this.location = {
+//             type: 'Point',
+//             coordinates: [loc[0].longitude, loc[0].latitude],
+//             formattedAddress: loc[0].formattedAddress,
+//             street: loc[0].streetName,
+//             city: loc[0].city,
+//             state: loc[0].stateCode,
+//             zipcode: loc[0].zipcode,
+//             country: loc[0].countryCode
 
-        //Do not store Address in DB
-        this.address = undefined;
-    next();
+//         },
+
+//         //Do not store Address in DB
+//         this.address = undefined;
+//     next();
 
 
-});
+// });
 
 UserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) {

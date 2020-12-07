@@ -47,17 +47,6 @@ const registerController = asyncHandler(async(req, res, next) => {
         text: messages
     };
 
-    transporter.sendMail(message, function(err, success) {
-        if (err) {
-            return res.status(200).json({
-                success: false,
-                message: `Account activation could not be send to ${email}`,
-
-            });
-        }
-
-    });
-
     user = await User.create({
         name,
         email,
@@ -67,19 +56,30 @@ const registerController = asyncHandler(async(req, res, next) => {
         phone
 
     });
+    transporter.sendMail(message, function(err, success) {
+        if (err) {
+            return res.status(200).json({
+                success: false,
+                message: `Account activation could not be send to ${email}`
 
+            });
+        }
+        if (success) {
+            // Create Token 
+            // const token = user.getSignedJwtToken();
+            // const createdDate = user.getCreatedDate();
+            return res.status(200).json({
+                success: true,
+                message: `Account activation link has been sent to ${email}`,
+                data: user
 
-
-
-    // Create Token 
-    // const token = user.getSignedJwtToken();
-    // const createdDate = user.getCreatedDate();
-    res.status(200).json({
-        success: true,
-        message: `Account activation link has been sent to ${email}`,
-        data: user
+            });
+        }
 
     });
+
+
+
 
 });
 
@@ -237,26 +237,28 @@ const logoutController = asyncHandler(async(req, res, next) => {
 
 const forgotPasswordController = asyncHandler(async(req, res, next) => {
     const { email } = req.body;
+
     // Validate emil & password
     if (!email) {
         return next(new ErrorResponse('Please provide an email', 400));
     }
 
     const user = await User.findOne({ email: req.body.email });
+
     if (!user) {
         return next(new ErrorResponse('There is no user with this email !', 404))
     }
+
 
     //Get reset token from User model
     const resetToken = user.getResetPasswordToken();
     // console.log(resetToken);
 
-
     // include hash password and hashed pass expired into DB since it called on Schema
     await user.save({ validateBeforeSave: true });
-
     //Create reset Url
     const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
+
     const messages = `You are receiving this message because you (or someone ) made a request for reset poassword
              Please click on the link to reset your password : \n\n ${resetUrl}`;
 
