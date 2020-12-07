@@ -1,3 +1,4 @@
+const path = require('path');
 const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
@@ -7,20 +8,24 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
 const { exit } = require('process');
 
+// const url = 'https://jsonplaceholder.typicode.com/todos';
+// const url = 'https://api.opencagedata.com/geocode/v1/json?key=42799ef0ae524b20bcc1d40c6df633f4&q=aa 11 nassarawa road nassarawa kaduna';
+
+
 //@desc   Register users
 //route POST /api/v1/auth/register
 // Access Public
 
 const registerController = asyncHandler(async(req, res, next) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, address, phone } = req.body;
+
 
     let user = await User.findOne({ email }).select('+password');
     if (user) {
         return next(new ErrorResponse('please this email already exist', 401));
     }
 
-    //Create activation token
-    const activationToken = jwt.sign({ name, email, password, role }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
+    const activationToken = jwt.sign({ name, email, password, role, address, phone }, process.env.ACTIVE_SECRET, { expiresIn: process.env.ACTIVE_SECRET_EXPIRE });
     const messages = `
     <h1>Please use the following to activate your account</h1>
     <a>${req.protocol}://${req.get('host')}/api/v1/auth/activation/${activationToken}</a>
@@ -53,27 +58,26 @@ const registerController = asyncHandler(async(req, res, next) => {
 
     });
 
-    //Create User
     user = await User.create({
         name,
         email,
         password,
-        role
+        role,
+        address,
+        phone
+
     });
+
+
 
 
     // Create Token 
     // const token = user.getSignedJwtToken();
     // const createdDate = user.getCreatedDate();
-
-    return res.status(200).json({
+    res.status(200).json({
         success: true,
         message: `Account activation link has been sent to ${email}`,
-        // data: user
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
+        data: user
 
     });
 
@@ -320,6 +324,62 @@ const resetPasswordController = asyncHandler(async(req, res, next) => {
 
 });
 
+//@desc  Update User Profile
+//route PUT /api/v1/dashboard/profile
+// Access Private
+
+const updateProfileController = asyncHandler(async(req, res, next) => {
+    let user = new User();
+    const updatefield = {
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+        profession: req.body.profession
+    };
+    // const filen = req.files;
+    // console.log(filen);
+    if (!req.files) {
+        return next(new ErrorResponse(`Please upload a file`, 400));
+
+    }
+
+    const file = req.files.file;
+
+    //ensure the file is an image
+    if (!file.mimetype.startsWith('image')) {
+        return next(
+            new ErrorResponse(`Please upload an image file`, 400)
+        );
+    }
+
+    //Check file size
+    if (file.size > process.env.MAX_FILE_UPLOAD) {
+        return next(
+            new ErrorResponse(`you try to upload an image file too large please it should not be greater than 1MG`, 400)
+        );
+    }
+
+    //Create Custom file name
+    file.name = `photo_${user._id}${path.parse(file.name).ext}`;
+    // console.log(file.name);
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+        if (err) {
+            console.error(err);
+            return next(
+                new ErrorResponse(`oops Error occur trying to upload image`, 500)
+            );
+        } else {
+            updatefield.image = file.name;
+            await User.findByIdAndUpdate(req.params.id, updatefield);
+            res.status(200).json({
+                success: true,
+                data: updatefield
+            });
+        }
+    });
+
+});
+
 
 //@desc  Get Current Loggedin users
 //route POST /api/v1/auth/me
@@ -368,5 +428,6 @@ module.exports = {
     logoutController,
     getMeController,
     registerController,
-    resendactivetokenController
+    resendactivetokenController,
+    updateProfileController
 };

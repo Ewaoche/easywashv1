@@ -9,6 +9,8 @@ const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const cors = require('cors');
+const fileupload = require('express-fileupload');
+
 
 
 
@@ -24,10 +26,13 @@ dotenv.config('./.env');
 
 //DB Connection
 connectDB();
+
+//create app
 const app = express();
 
 //Set security header
 app.use(helmet());
+
 //Mongosanitize
 app.use(mongoSanitize());
 
@@ -48,8 +53,22 @@ app.use(cors());
 //Prevent http param pollution
 app.use(hpp());
 
+
+//file uploading
+app.use(fileupload());
+//Set Static folder
+app.use(express.static(path.join(__dirname, 'public')));
+
 //Routes files
-const auth = require('./routes/auth.route');
+const authRoute = require('./routes/auth.route');
+
+// const pricingRoute = require('./routes/pricing.route');
+
+const storelocationRoute = require('./routes/storelocation.route');
+
+const vendorRoute = require('./routes/vendor.route');
+
+const orderRoute = require('./routes/order.route');
 
 
 //body-parser
@@ -61,13 +80,22 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 
-}
+};
 
 
 
 
 //Mount the routers
-app.use('/api/v1/auth', auth);
+app.use('/api/v1/auth', authRoute);
+
+// app.use('/api/v1/dashboard/pricing', pricingRoute);
+
+
+app.use('/api/v1/address', storelocationRoute);
+
+app.use('/api/v1/vendor', vendorRoute);
+
+app.use('/api/v1/order', orderRoute);
 
 
 app.use(errorHandler);

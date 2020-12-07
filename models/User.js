@@ -3,8 +3,22 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const geocoder = require('../utils/geocoder');
 
-UserSchma = new mongoose.Schema({
+
+// const GeoSchema = new mongoose.Schema({
+//     type: {
+//         type: String,
+//         default: "Point"
+//     },
+//     coordinates: {
+//         type: [Number],
+//         index: "2dsphere"
+//     }
+// });
+
+
+UserSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Please add a name']
@@ -20,13 +34,53 @@ UserSchma = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'vendor']
+        enum: ['user', 'vendor'],
+        required: [true, 'please provide role']
 
     },
+
+    profession: {
+        type: String
+    },
+
+    image: {
+        type: String,
+        default: 'no-photo.jpg'
+    },
+
 
     isVerify: {
         type: Boolean,
         default: false
+    },
+    address: {
+        type: String,
+        required: [true, ['please provide address']]
+    },
+
+    location: {
+        // GeoJSON Point
+        type: {
+            type: String,
+            enum: ['Point']
+        },
+        coordinates: {
+            type: [Number],
+            index: '2dsphere'
+        },
+        formattedAddress: String,
+        street: String,
+        city: String,
+        state: String,
+        zipcode: String,
+        country: String
+    },
+
+
+
+    phone: {
+        type: String,
+        required: [true, ['please provide phone number']]
     },
 
     password: {
@@ -35,6 +89,9 @@ UserSchma = new mongoose.Schema({
         minlength: 6,
         select: false
     },
+
+    // geometry: GeoSchema,
+
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     createdAt: {
@@ -44,13 +101,31 @@ UserSchma = new mongoose.Schema({
 
 });
 
-//Custom Date
-UserSchma.method("getCreatedDate", () => {
-    return moment().format("dddd Do MMMM YYYY")
-})
 
-//Encrypt password using bcrypt
-UserSchma.pre('save', async function(next) {
+
+//Geocode and create loaction field
+UserSchema.pre('save', async function(next) {
+    const loc = await geocoder.geocode(this.address);
+    this.location = {
+            type: 'Point',
+            coordinates: [loc[0].longitude, loc[0].latitude],
+            formattedAddress: loc[0].formattedAddress,
+            street: loc[0].streetName,
+            city: loc[0].city,
+            state: loc[0].stateCode,
+            zipcode: loc[0].zipcode,
+            country: loc[0].countryCode
+
+        },
+
+        //Do not store Address in DB
+        this.address = undefined;
+    next();
+
+
+});
+
+UserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) {
         next();
     }
@@ -59,19 +134,20 @@ UserSchma.pre('save', async function(next) {
 });
 
 //Sign jwt and return
-UserSchma.methods.getSignedJwtToken = function() {
+UserSchema.methods.getSignedJwtToken = function() {
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     });
 };
 
+
 //Match User entered password to hashed password in database
-UserSchma.methods.matchPassword = async function(enteredPassword) {
+UserSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
 //Generate and Hash password Token
-UserSchma.methods.getResetPasswordToken = function(req, res, next) {
+UserSchema.methods.getResetPasswordToken = function(req, res, next) {
     // Generate token
     const resetToken = crypto.randomBytes(20).toString('hex');
 
@@ -86,4 +162,4 @@ UserSchma.methods.getResetPasswordToken = function(req, res, next) {
     return resetToken;
 }
 
-module.exports = mongoose.model('User', UserSchma);
+module.exports = mongoose.model('User', UserSchema);
