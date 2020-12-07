@@ -20,10 +20,14 @@ const PricingSchema = new mongoose.Schema({
         type: String,
         required: [true, 'please provide item price'],
     },
+    PriceTotal: {
+        type: String,
+        required: [true, 'please provide total price'],
+    },
 
     createdBy: {
         type: mongoose.Schema.ObjectId,
-        ref: 'User'
+        ref: 'Vendor'
     },
 
     createdAt: {

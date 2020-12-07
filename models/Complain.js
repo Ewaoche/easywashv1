@@ -11,12 +11,12 @@ const ComplainSchema = new mongoose.Schema({
     },
     order: {
         type: mongoose.Schema.ObjectId,
-        ref: Order,
+        ref: 'Order',
         required: [true, 'please entere an order']
     },
     user: {
         type: mongoose.Schema.ObjectId,
-        ref: User,
+        ref: 'User',
         required: [true, 'please write a complain']
 
     },

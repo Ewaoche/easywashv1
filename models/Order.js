@@ -12,11 +12,11 @@ const OrderSchema = new mongoose.Schema({
     },
 
     dropOffDate: {
-        type: Date,
+        type: String,
         default: moment().format("dddd Do MMMM YYYY")
     },
     pickOffDate: {
-        type: Date,
+        type: String,
         default: moment().format("dddd Do MMMM YYYY")
     },
 
@@ -38,7 +38,7 @@ const OrderSchema = new mongoose.Schema({
 
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: User,
+        ref: 'User',
         required: [true, 'please provide a user']
     },
     isDelivered: {
@@ -48,15 +48,13 @@ const OrderSchema = new mongoose.Schema({
 
     orderStatus: {
         type: String,
-        enum: ['pending', 'completed', 'inprogress'],
+        enum: ['pending', 'completed', 'review', 'inprogress', 'cancelled', 'delivered'],
         default: 'pending'
     },
 
     deliveredAt: { type: Date, default: moment() },
 
-    completedOrder: { type: Number, default: 0 },
 
-    completedOrderAt: { type: Date, default: moment() },
 
     createdAt: {
         type: String,

@@ -70,6 +70,8 @@ const vendorRoute = require('./routes/vendor.route');
 
 const orderRoute = require('./routes/order.route');
 
+const complainRoute = require('./routes/complain.route');
+
 
 //body-parser
 app.use(express.json());
@@ -96,6 +98,7 @@ app.use('/api/v1/address', storelocationRoute);
 app.use('/api/v1/vendor', vendorRoute);
 
 app.use('/api/v1/order', orderRoute);
+app.use('/api/v1/users', complainRoute);
 
 
 app.use(errorHandler);

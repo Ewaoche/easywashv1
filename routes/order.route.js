@@ -7,7 +7,8 @@ const { protect } = require('../middleware/auth');
 const { createOrderController } = require('../controllers/orderController');
 
 
-router.post('/', protect, createOrderController);
+router.post('/', createOrderController);
+
 
 
 module.exports = router;

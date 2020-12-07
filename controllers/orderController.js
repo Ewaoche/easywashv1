@@ -10,10 +10,7 @@ const createOrderController = asyncHandler(async(req, res, next) => {
 
     orders = new Order({
         orderItems: orders.orderItems,
-        orderType: orders.orderType,
-        itemsPrice: orders.itemsPrice,
-        totalPrice: orders.totalPrice,
-        user: user._id
+        user: req.body.user,
 
     });
 
