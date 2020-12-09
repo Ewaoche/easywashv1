@@ -31,7 +31,7 @@ const OrderSchema = new mongoose.Schema({
     //     },
 
     // ],
-    orderItems: {
+    pricing: {
         type: mongoose.Schema.ObjectId,
         ref: 'Pricing',
     },

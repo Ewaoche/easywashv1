@@ -4,7 +4,7 @@ const ErrorResponse = require('../utils/errorResponse');
 
 
 //@ Create storelocation,
-//@ Route POST /api/v1/dashboard/location
+//@ Route POST /api/v1/location
 //@ Access Private/Vendor
 
 const createStorelocationController = asyncHandler(async(req, res, next) => {
@@ -23,7 +23,7 @@ const createStorelocationController = asyncHandler(async(req, res, next) => {
 });
 
 //@ Get All storelocation,
-//@ Route GET /api/v1/dashboard/location
+//@ Route GET /api/v1/location
 //@ Access Private/Vendor
 
 const getAllstoreLocationController = asyncHandler(async(req, res, next) => {
@@ -38,7 +38,7 @@ const getAllstoreLocationController = asyncHandler(async(req, res, next) => {
 });
 
 //@ Get storelocation,
-//@ Route GET /api/v1/dashboard/location/:id
+//@ Route GET /api/v1/location/:id
 //@ Access Private/Vendor
 
 const getstoreLocationController = asyncHandler(async(req, res, next) => {
@@ -52,7 +52,7 @@ const getstoreLocationController = asyncHandler(async(req, res, next) => {
     });
 });
 //@ Upadete storelocation,
-//@ Route PUT /api/v1/dashboard/location/:id
+//@ Route PUT /api/v1/location/:id
 //@ Access Private/Vendor
 
 const updatestoreLocationController = asyncHandler(async(req, res, next) => {
@@ -68,7 +68,7 @@ const updatestoreLocationController = asyncHandler(async(req, res, next) => {
 
 
 //@ Delete storelocation,
-//@ Route DELETE /api/v1/dashboard/location/:id
+//@ Route DELETE /api/v1/location/:id
 //@ Access Private/Vendor
 
 const deletestoreLocationController = asyncHandler(async(req, res, next) => {

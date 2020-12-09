@@ -1,24 +1,32 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const Pricing = require('../models/Pricing');
+const User = require('../models/User');
 
 
-//@desc   Add pricing
-//@route POST /api/v1/dashboard/pricing
-// @Access Private/Vendor
+// @desc      Add review
+// @route     POST /api/v1/vendor/:vendorId/prices
+// @access    Private
 const createPricingController = asyncHandler(async(req, res, next) => {
-    const { itemName, description, estimatedTime, price, createdBy } = req.body;
-    // const createdBy = req.body.createdBy;
-    //create price
+    const { itemName, description, estimatedTime, price, priceTotal } = req.body;
+    const vendor = req.params.vendorId;
+    // req.body.vendorId = req.params.vendorId;
+
+    const vendors = await User.findById(req.params.vendorId);
+    if (!vendors) {
+        return next(new ErrorResponse(`there is no such vendor with the id ${vendorId}`, 404));
+    }
+
     const pricing = await Pricing.create({
         itemName,
         description,
         estimatedTime,
         price,
-        createdBy
+        priceTotal,
+        vendor
 
     });
-    res.status(200).json({
+    res.status(201).json({
         success: true,
         data: pricing
     });
@@ -26,19 +34,23 @@ const createPricingController = asyncHandler(async(req, res, next) => {
 
 });
 
-//@desc   GET All pricing
-//@route GET /api/v1/dashboard/pricing
-// @Access Private/Vendor
+// @desc      Get Prices
+// @route     GET /api/v1/pricing
+// @route     GET /api/v1/vendor/:vendorId/pricing
+// @access    Public
 
 const getAllPricingController = asyncHandler(async(req, res, next) => {
-    let pricing = await Pricing.find();
-    if (!pricing) {
-        return next(new ErrorResponse('there is no pricing with the id', 404));
-    };
+    let query;
+    if (req.params.vendorId) {
+        query = Pricing.find({ vendor: req.params.vendorId });
 
-    res.status(200).json({
+    } else {
+        query = Pricing.find();
+    }
+    const prices = await query;
+    return res.status(200).json({
         success: true,
-        data: pricing
+        data: prices
     });
 
 });
@@ -66,7 +78,7 @@ const getPricingController = asyncHandler(async(req, res, next) => {
 const updatePricingController = asyncHandler(async(req, res, next) => {
     const pricing = await Pricing.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
-    res.status(201).json({
+    res.status(200).json({
         success: true,
         data: pricing
     });

@@ -62,7 +62,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Routes files
 const authRoute = require('./routes/auth.route');
 
-// const pricingRoute = require('./routes/pricing.route');
+const pricingRoute = require('./routes/pricing.route');
 
 const storelocationRoute = require('./routes/storelocation.route');
 
@@ -71,6 +71,9 @@ const vendorRoute = require('./routes/vendor.route');
 const orderRoute = require('./routes/order.route');
 
 const complainRoute = require('./routes/complain.route');
+
+const reviewRoute = require('./routes/review.route');
+
 
 
 //body-parser
@@ -90,15 +93,18 @@ if (process.env.NODE_ENV === 'development') {
 //Mount the routers
 app.use('/api/v1/auth', authRoute);
 
-// app.use('/api/v1/dashboard/pricing', pricingRoute);
+app.use('/api/v1/pricing', pricingRoute);
 
 
-app.use('/api/v1/address', storelocationRoute);
+app.use('/api/v1/location', storelocationRoute);
 
 app.use('/api/v1/vendor', vendorRoute);
 
 app.use('/api/v1/order', orderRoute);
-app.use('/api/v1/users', complainRoute);
+
+app.use('/api/v1/complains', complainRoute);
+
+app.use('/api/v1/reviews', reviewRoute);
 
 
 app.use(errorHandler);

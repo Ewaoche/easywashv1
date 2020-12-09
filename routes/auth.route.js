@@ -8,6 +8,10 @@ const { protect } = require('../middleware/auth');
 const { registerController, loginController, activationController, resendactivetokenController, getMeController, forgotPasswordController, resetPasswordController, updateProfileController } =
 require('../controllers/authController');
 
+//Redirect order route
+const orderRoute = require('./order.route');
+router.use('/:userId/order', orderRoute);
+
 
 router.post('/register', registerController);
 router.post('/login', loginController);

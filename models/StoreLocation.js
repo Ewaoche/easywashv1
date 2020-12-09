@@ -14,6 +14,14 @@ const StoreLocationSchema = new mongoose.Schema({
         type: String,
         required: [true, 'please provide phone']
     },
+
+    user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: [true, 'please provide user']
+
+    },
+
     createdAt: {
         type: Date,
         default: moment()

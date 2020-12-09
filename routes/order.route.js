@@ -1,13 +1,19 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const { protect } = require('../middleware/auth');
 
 
 //Load order controllers 
-const { createOrderController } = require('../controllers/orderController');
+const { createOrderController, getOrderController } = require('../controllers/orderController');
 
 
-router.post('/', createOrderController);
+//Redirect complain route
+const complainRoute = require('./complain.route');
+router.use('/:orderId/complains', complainRoute);
+
+
+router.route('/').post(createOrderController)
+    .get(getOrderController);
 
 
 

@@ -4,35 +4,21 @@ const { protect } = require('../middleware/auth');
 
 //Load vendor controllers
 const {
-    getVendorsController,
-    getAllPricingController,
-    createPricingController,
-    getPricingController,
-    updatePricingController,
-    deletePricingController
-
-
-
-
+    getVendorsController
 } = require('../controllers/vendorController');
+
+
+//Include other routes
+const reviewRoute = require('./review.route');
+const pricingRoute = require('./pricing.route');
+
+//redirect review route
+router.use('/:vendorId/reviews', reviewRoute);
+router.use('/:vendorId/prices', pricingRoute);
+
 
 //VENDOR ROUTES
 router.get('/getAllvendors', getVendorsController);
 
-
-
-
-//protect routes
-// router.use(protect);
-
-//VENDOR PRICESS ROUTES
-router.route('/prices')
-    .post(createPricingController)
-    .get(getAllPricingController);
-
-router.route('/prices/:id')
-    .get(getPricingController)
-    .put(updatePricingController)
-    .delete(deletePricingController);
 
 module.exports = router;

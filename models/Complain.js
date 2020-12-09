@@ -9,7 +9,7 @@ const ComplainSchema = new mongoose.Schema({
         type: String,
         required: [true, 'please write a complain']
     },
-    order: {
+    orderId: {
         type: mongoose.Schema.ObjectId,
         ref: 'Order',
         required: [true, 'please entere an order']
@@ -18,7 +18,6 @@ const ComplainSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: [true, 'please write a complain']
-
     },
     createdAt: {
         type: Date,
