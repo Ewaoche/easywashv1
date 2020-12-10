@@ -52,7 +52,10 @@ const OrderSchema = new mongoose.Schema({
         default: 'pending'
     },
 
-    deliveredAt: { type: Date, default: moment() },
+    deliveredAt: {
+        type: Date,
+        default: moment()
+    },
 
 
 

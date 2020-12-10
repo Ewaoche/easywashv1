@@ -37,7 +37,7 @@ const getOrderController = asyncHandler(async(req, res, next) => {
         query = Order.find({ user: req.params.userId }).populate('pricing');
 
     } else {
-        query = Order.find();
+        query = Order.find().populate('pricing');
     }
     const orders = await query;
     if (!orders) {
