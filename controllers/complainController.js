@@ -9,7 +9,7 @@ const Order = require('../models/Order');
 const createComplainController = asyncHandler(async(req, res, next) => {
 
     req.body.user = req.user.id;
-
+    console.log(req.body.complain, req.params.orderId);
     if (!req.body.complain || !req.params.orderId) {
         return next(new ErrorResponse('order or complain must not be empty', 400));
     };
