@@ -1,5 +1,5 @@
  const express = require('express')
-
+ const { protect } = require('../middleware/auth');
  const router = express.Router({ mergeParams: true });
 
  //advance result middleware
@@ -12,6 +12,6 @@
  router.route('/').get(advanceResults(Review, {
      path: 'vendor',
      select: 'name'
- }), getReviewController).post(createReviewController);
+ }), getReviewController).post(protect, createReviewController);
 
  module.exports = router;

@@ -27,8 +27,8 @@ const ReviewSchema = new mongoose.Schema({
 
     user: {
         type: mongoose.Schema.ObjectId,
-        ref: 'User'
-            // required: true
+        ref: 'User',
+        required: true
     }
 });
 
@@ -36,34 +36,6 @@ const ReviewSchema = new mongoose.Schema({
 ReviewSchema.index({ vendor: 1, user: 1 }, { unique: true });
 
 
-//Static method to get avg of course tuitions
-// ReviewSchema.statics.getAverageRating = async function(vendorId) {
-//     const obj = await this.aggregate([{
-//             $match: {
-//                 vendor: vendorId
-//             }
-//         },
-//         {
-//             $group: {
-//                 _id: '$vendor',
-//                 averageRating: { $avg: '$rating' }
-//             }
-//         }
-//     ]);
-//     // console.log(obj);
-//     try {
-//         await this.model('vendor').findByIdAndUpdate(vendorId, {
-//             averageRating: obj[0].averageRating
-//         });
-//     } catch (err) {
-//         console.error(err);
-//     }
-// }
-
-// //Call getAverageRating after save
-// ReviewSchema.post('save', function() {
-//     this.constructor.getAverageRating(this.vendor);
-// });
 
 
 

@@ -11,7 +11,7 @@ const User = require('../models/User');
 const createReviewController = asyncHandler(async(req, res, next) => {
 
     req.body.vendor = req.params.vendorId;
-    // req.body.user = req.user.id
+    req.body.user = req.user.id;
 
     //check if order exist 
     const vendors = await User.findById(req.params.vendorId);
