@@ -17,7 +17,7 @@ const ComplainSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: [true, 'please write a complain']
+        required: [true, 'please provide a  user']
     },
     createdAt: {
         type: Date,
