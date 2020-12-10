@@ -22,7 +22,7 @@ const { protect, authorize } = require('../middleware/auth');
 
 router.route('/')
     .get(getComplainsController)
-    .post(createComplainController);
+    .post(protect, createComplainController);
 
 
 module.exports = router;

@@ -7,24 +7,20 @@ const Order = require('../models/Order');
 
 
 const createComplainController = asyncHandler(async(req, res, next) => {
-    const { complain, orderId, user } = req.body;
-    // const user = req.user.id;
 
-    if (!complain || !orderId) {
+    req.body.user = req.user.id;
+
+    if (!req.body.complain || !req.body.orderId) {
         return next(new ErrorResponse('order or complain must not be empty', 400));
     };
-    const orders = await Order.findById(orderId);
+    const orders = await Order.findById(req.body.orderId);
     if (!orders) {
-        return next(new ErrorResponse(`No order with an Id of ${req.params.orderId}`, 404));
+        return next(new ErrorResponse(`No order with an Id of ${req.body.orderId}`, 404));
 
     }
-    let complains = new Complain({
-        complain,
-        orderId,
-        user
-    });
 
-    complains = await complains.save();
+
+    const complains = await Complain.create(req.body);
 
     if (!complain) {
         return next(new ErrorResponse('error occured trying to make complain try again', 500));
