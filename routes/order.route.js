@@ -12,7 +12,7 @@ const complainRoute = require('./complain.route');
 router.use('/:orderId/complains', complainRoute);
 
 
-router.route('/').post(createOrderController)
+router.route('/').post(protect, createOrderController)
     .get(getOrderController);
 
 
