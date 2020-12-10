@@ -15,12 +15,13 @@ const StoreLocationSchema = new mongoose.Schema({
         required: [true, 'please provide phone']
     },
 
-    user: {
+    createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: [true, 'please provide user']
+        required: [true, 'please provide creator']
 
     },
+
 
     createdAt: {
         type: Date,

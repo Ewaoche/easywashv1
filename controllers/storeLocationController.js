@@ -8,13 +8,9 @@ const ErrorResponse = require('../utils/errorResponse');
 //@ Access Private/Vendor
 
 const createStorelocationController = asyncHandler(async(req, res, next) => {
-    const { address, email, phone } = req.body;
+    req.body.createdBy = req.user.id;
 
-    const storelocation = await StoreLocation.create({
-        address,
-        email,
-        phone
-    });
+    const storelocation = await StoreLocation.create(req.body);
 
     res.status(200).json({
         success: true,

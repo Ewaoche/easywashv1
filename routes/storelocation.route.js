@@ -9,7 +9,7 @@ const { createStorelocationController, getAllstoreLocationController, getstoreLo
 //protect routes
 // router.use(protect);
 router.route('/')
-    .post(createStorelocationController)
+    .post(protect, createStorelocationController)
     .get(getAllstoreLocationController);
 
 router.route('/:id')
