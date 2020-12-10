@@ -9,7 +9,7 @@ const User = require('../models/User');
 // @route     POST /api/v1/vendor/:vendorId/reviews
 // @access    Private
 const createReviewController = asyncHandler(async(req, res, next) => {
-    // add order to req body
+
     req.body.vendor = req.params.vendorId;
     // req.body.user = req.user.id
 
@@ -35,8 +35,9 @@ const createReviewController = asyncHandler(async(req, res, next) => {
 // @route     GET /api/v1/vendor/:vendorId/reviews
 // @access    Public
 const getReviewController = asyncHandler(async(req, res, next) => {
+
     if (req.params.vendorId) {
-        const reviews = await Review.find({ vendor: vendorId });
+        const reviews = await Review.find({ vendor: req.params.vendorId }).populate('vendor', { "name": 0, "isVerify": 0, "_id": 0, "createdAt": 0, "role": 0 });
         return res.status(200).json({
             success: true,
             data: reviews

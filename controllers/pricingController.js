@@ -4,13 +4,13 @@ const Pricing = require('../models/Pricing');
 const User = require('../models/User');
 
 
-// @desc      Add review
+// @desc      Add pricing
 // @route     POST /api/v1/vendor/:vendorId/prices
 // @access    Private
 const createPricingController = asyncHandler(async(req, res, next) => {
     const { itemName, description, estimatedTime, price, priceTotal } = req.body;
-    const vendor = req.params.vendorId;
-    // req.body.vendorId = req.params.vendorId;
+    // const vendor = req.params.vendorId;
+    const vendor = req.user._id;
 
     const vendors = await User.findById(req.params.vendorId);
     if (!vendors) {
@@ -24,7 +24,7 @@ const createPricingController = asyncHandler(async(req, res, next) => {
         price,
         priceTotal,
         vendor
-
+        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZDE4ZDkxOGY3OWRjMDAwNGRkYmFiNiIsImlhdCI6MTYwNzU3Mjk2NSwiZXhwIjoxNjEwMTY0OTY1fQ.BALPvX2qfwHgt6X3tgpbSCWgyBtytTbZsOxSlR0DgUs
     });
     res.status(201).json({
         success: true,

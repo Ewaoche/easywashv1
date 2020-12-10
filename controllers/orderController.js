@@ -23,6 +23,9 @@ const createOrderController = asyncHandler(async(req, res, next) => {
     });
 
 });
+// "pricing_id": "5fd0e255a9d61932f0eacc2b",
+// "vendor": "5fce0fc122e5612488b8909f",
+
 
 // @desc      Get order
 // @route     GET /api/v1/order
@@ -32,7 +35,7 @@ const getOrderController = asyncHandler(async(req, res, next) => {
     let query;
     // console.log(req.params.userId);
     if (req.params.userId) {
-        query = Order.find({ user: req.params.userId });
+        query = Order.find({ user: req.params.userId }).populate('pricing');
 
     } else {
         query = Order.find();
@@ -46,6 +49,11 @@ const getOrderController = asyncHandler(async(req, res, next) => {
         success: true,
         data: orders
     });
+});
+
+
+const updateOrderController = asyncHandler(async(req, res, next) => {
+
 });
 
 module.exports = {

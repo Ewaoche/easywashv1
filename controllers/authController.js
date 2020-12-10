@@ -6,7 +6,6 @@ const User = require('../models/User');
 // const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
-const { exit } = require('process');
 
 // const url = 'https://jsonplaceholder.typicode.com/todos';
 // const url = 'https://api.opencagedata.com/geocode/v1/json?key=42799ef0ae524b20bcc1d40c6df633f4&q=aa 11 nassarawa road nassarawa kaduna';
@@ -71,7 +70,13 @@ const registerController = asyncHandler(async(req, res, next) => {
             return res.status(200).json({
                 success: true,
                 message: `Account activation link has been sent to ${email}`,
-                data: user
+                data: {
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    address: user.address,
+                    phone: user.phone
+                }
 
             });
         }

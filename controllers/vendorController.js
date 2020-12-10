@@ -1,14 +1,7 @@
 const User = require('../models/User');
-const Pricing = require('../models/Pricing');
-
-
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const geocoder = require('../utils/geocoder');
-
-
-
-
 
 
 
@@ -17,7 +10,7 @@ const getVendorsController = asyncHandler(async(req, res, next) => {
 
     // const vendors = await User.find({ geometry: { $near: { $geometry: { type: "Point", coordinates: [7, 13.3456] } } } });
 
-    const vendors = await User.find({ role: 'vendor' });
+    const vendors = await User.find({ role: 'vendor', "isVerify": "true" }, { "location": 0 });
 
 
     if (!vendors) {

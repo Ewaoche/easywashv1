@@ -7,7 +7,7 @@ const { protect } = require('../middleware/auth');
 const { createPricingController, getAllPricingController, getPricingController, updatePricingController, deletePricingController } = require('../controllers/pricingController');
 
 router.route('/')
-    .post(createPricingController)
+    .post(protect, createPricingController)
     .get(
         getAllPricingController);
 
