@@ -24,7 +24,7 @@ const createPricingController = asyncHandler(async(req, res, next) => {
         price,
         priceTotal,
         vendor
-        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZDE4ZDkxOGY3OWRjMDAwNGRkYmFiNiIsImlhdCI6MTYwNzU3Mjk2NSwiZXhwIjoxNjEwMTY0OTY1fQ.BALPvX2qfwHgt6X3tgpbSCWgyBtytTbZsOxSlR0DgUs
+        // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZDE4ZDkxOGY3OWRjMDAwNGRkYmFiNiIsImlhdCI6MTYwNzU3Mjk2NSwiZXhwIjoxNjEwMTY0OTY1fQ.BALPvX2qfwHgt6X3tgpbSCWgyBtytTbZsOxSlR0DgUs
     });
     res.status(201).json({
         success: true,
