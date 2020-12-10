@@ -10,12 +10,12 @@ const createComplainController = asyncHandler(async(req, res, next) => {
 
     req.body.user = req.user.id;
 
-    if (!req.body.complain || !req.body.orderId) {
+    if (!req.body.complain || !req.params.orderId) {
         return next(new ErrorResponse('order or complain must not be empty', 400));
     };
-    const orders = await Order.findById(req.body.orderId);
+    const orders = await Order.findById(req.params.orderId);
     if (!orders) {
-        return next(new ErrorResponse(`No order with an Id of ${req.body.orderId}`, 404));
+        return next(new ErrorResponse(`No order with an Id of ${req.params.orderId}`, 404));
 
     }
 
