@@ -10,7 +10,7 @@ const User = require('../models/User');
 const createPricingController = asyncHandler(async(req, res, next) => {
     const { itemName, description, estimatedTime, price, priceTotal } = req.body;
     // const vendor = req.params.vendorId;
-    const vendor = req.user._id;
+    const vendor = req.user.id;
 
     const vendors = await User.findById(req.params.vendorId);
     if (!vendors) {
