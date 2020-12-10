@@ -1,6 +1,5 @@
 const asyncHandler = require('../middleware/async');
 const Order = require('../models/Order');
-const { findById } = require('../models/Pricing');
 const Pricing = require('../models/Pricing');
 const ErrorResponse = require('../utils/errorResponse');
 
@@ -13,7 +12,7 @@ const createOrderController = asyncHandler(async(req, res, next) => {
     };
 
     req.body.pricing = req.body.pricing;
-    req.body.user = req.body.user;
+    req.body.user = req.user.id;
 
     orders = await Order.create(req.body);
 
