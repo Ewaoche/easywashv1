@@ -178,7 +178,19 @@ const loginController = asyncHandler(async(req, res, next) => {
 
     }
 
-    sendTokenResponse(user, 200, res);
+    res.status(200).json({
+        status: success,
+        message: 'Your are loggedin successfully ',
+        data: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token
+        }
+    })
+
+    // sendTokenResponse(user, 200, res);
 });
 
 
@@ -368,7 +380,7 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
     }
 
     //Create Custom file name
-    file.name = `photo_${user._id}${path.parse(file.name).ext}`;
+    file.name = `photo_${user.id}${path.parse(file.name).ext}`;
     // console.log(file.name);
     file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
         if (err) {
