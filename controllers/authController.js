@@ -384,7 +384,7 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
     // console.log(file.name);
     file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
         if (err) {
-            console.error(err);
+            // console.error(err);
             return next(
                 new ErrorResponse(`oops Error occur trying to upload image`, 500)
             );
