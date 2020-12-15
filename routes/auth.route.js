@@ -20,7 +20,7 @@ router.post('/activation', activationController);
 router.post('/resendactivetoken', resendactivetokenController);
 router.post('/forgotpassword', forgotPasswordController);
 router.put('/resetpassword/:resettoken', resetPasswordController);
-router.put('/profile/:id', protect, updateProfileController);
+router.put('/profile/:id', updateProfileController);
 
 
 
