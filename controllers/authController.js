@@ -368,7 +368,7 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
     }
 
     //Create Custom file name
-    file.name = `photo_${user.id}${path.parse(file.name).ext}`;
+    file.name = `photo_${user._id}${path.parse(file.name).ext}`;
     // console.log(file.name);
     file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
         if (err) {
@@ -378,17 +378,16 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
             );
         } else {
             updatefield.image = file.name;
-            await User.findByIdAndUpdate(user.id, updatefield);
+            await User.findByIdAndUpdate(req.params.id, updatefield);
             res.status(200).json({
-                status: success,
-                message: 'updated successfully',
+                status: 'success',
+                message: 'profile updated successfully',
                 data: updatefield
             });
         }
     });
 
 });
-
 
 
 //@desc  Get Current Loggedin users
@@ -398,8 +397,7 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
 const getMeController = asyncHandler(async(req, res, next) => {
     const user = await User.findById(req.user.id);
     res.status(200).json({
-        status: success,
-        message: 'logged in users retrieved',
+        success: true,
         data: user
     });
 });
