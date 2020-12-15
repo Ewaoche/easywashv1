@@ -3,7 +3,6 @@ const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
-// const sendEmail = require('../services/sendEmail');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
 
@@ -203,18 +202,20 @@ const activationController = asyncHandler(async(req, res, next) => {
         return res.status(400).json({ success: false, message: 'You already verified' });
     }
 
-    // Create user
+    // update user
     user.isVerify = true;
     user = await user.save();
 
     return res.status(200).json({
-        success: true,
+        status: success,
         message: 'Your account has been verify successfully ',
-        // data: user
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
+        data: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        }
+
     });
 
 
@@ -367,7 +368,7 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
     }
 
     //Create Custom file name
-    file.name = `photo_${user._id}${path.parse(file.name).ext}`;
+    file.name = `photo_${user.id}${path.parse(file.name).ext}`;
     // console.log(file.name);
     file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
         if (err) {
@@ -377,15 +378,17 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
             );
         } else {
             updatefield.image = file.name;
-            await User.findByIdAndUpdate(req.params.id, updatefield);
+            await User.findByIdAndUpdate(user.id, updatefield);
             res.status(200).json({
-                success: true,
+                status: success,
+                message: 'updated successfully',
                 data: updatefield
             });
         }
     });
 
 });
+
 
 
 //@desc  Get Current Loggedin users
@@ -395,7 +398,8 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
 const getMeController = asyncHandler(async(req, res, next) => {
     const user = await User.findById(req.user.id);
     res.status(200).json({
-        success: true,
+        status: success,
+        message: 'logged in users retrieved',
         data: user
     });
 });

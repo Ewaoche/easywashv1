@@ -22,8 +22,6 @@ const createOrderController = asyncHandler(async(req, res, next) => {
     });
 
 });
-// "pricing_id": "5fd0e255a9d61932f0eacc2b",
-// "vendor": "5fce0fc122e5612488b8909f",
 
 
 // @desc      Get order
