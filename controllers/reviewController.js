@@ -23,7 +23,8 @@ const createReviewController = asyncHandler(async(req, res, next) => {
     console.log(reviews);
 
     return res.status(200).json({
-        success: true,
+        status: 'success',
+        message: ' Review created successfully',
         data: reviews
     });
 
@@ -39,7 +40,8 @@ const getReviewController = asyncHandler(async(req, res, next) => {
     if (req.params.vendorId) {
         const reviews = await Review.find({ vendor: req.params.vendorId }).populate('vendor', { "name": 0, "isVerify": 0, "_id": 0, "createdAt": 0, "role": 0 });
         return res.status(200).json({
-            success: true,
+            status: 'success',
+            message: 'Available Reviews ',
             data: reviews
         });
     } else {

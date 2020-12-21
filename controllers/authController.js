@@ -142,7 +142,7 @@ const resendactivetokenController = asyncHandler(async(req, res, next) => {
     });
 
     res.status(200).json({
-        success: true,
+        status: 'success',
         message: `Account activation has been send to ${email} again !`
     });
 
@@ -232,8 +232,8 @@ const logoutController = asyncHandler(async(req, res, next) => {
         httpOnly: true
     });
     res.status(200).json({
-        success: true,
-        data: "successfully logout!"
+        status: 'success',
+        message: "successfully logout!"
     });
 });
 
@@ -380,7 +380,8 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
             updatefield.image = file.name;
             await User.findByIdAndUpdate(req.params.id, updatefield);
             res.status(200).json({
-                success: true,
+                status: 'success',
+                message: 'profile updated successfully',
                 data: updatefield
             });
         }
@@ -396,7 +397,8 @@ const updateProfileController = asyncHandler(async(req, res, next) => {
 const getMeController = asyncHandler(async(req, res, next) => {
     const user = await User.findById(req.user.id);
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'Available users',
         data: user
     });
 });
@@ -422,7 +424,7 @@ const sendTokenResponse = (user, statusCode, res) => {
         .status(statusCode)
         .cookie('token', token, options)
         .json({
-            success: true,
+            status: 'success',
             token,
             user
         });

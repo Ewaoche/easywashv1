@@ -27,7 +27,8 @@ const createPricingController = asyncHandler(async(req, res, next) => {
         // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZDE4ZDkxOGY3OWRjMDAwNGRkYmFiNiIsImlhdCI6MTYwNzU3Mjk2NSwiZXhwIjoxNjEwMTY0OTY1fQ.BALPvX2qfwHgt6X3tgpbSCWgyBtytTbZsOxSlR0DgUs
     });
     res.status(201).json({
-        success: true,
+        status: 'success',
+        message: ' price created successfully',
         data: pricing
     });
 
@@ -49,7 +50,8 @@ const getAllPricingController = asyncHandler(async(req, res, next) => {
     }
     const prices = await query;
     return res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'Available Prices ',
         data: prices
     });
 
@@ -66,7 +68,8 @@ const getPricingController = asyncHandler(async(req, res, next) => {
     };
 
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'Available Prices ',
         data: pricing
     });
 
@@ -79,7 +82,8 @@ const updatePricingController = asyncHandler(async(req, res, next) => {
     const pricing = await Pricing.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'price updated successfully',
         data: pricing
     });
 });
@@ -92,7 +96,8 @@ const deletePricingController = asyncHandler(async(req, res, next) => {
     await Pricing.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'price deleted successfully',
         data: {}
     });
 });

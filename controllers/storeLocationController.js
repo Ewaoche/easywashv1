@@ -13,7 +13,8 @@ const createStorelocationController = asyncHandler(async(req, res, next) => {
     const storelocation = await StoreLocation.create(req.body);
 
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: ' storelocation created successfully',
         data: storelocation
     });
 });
@@ -28,7 +29,8 @@ const getAllstoreLocationController = asyncHandler(async(req, res, next) => {
         return next(new ErrorResponse('oops! there is no stored addresses', 404))
     }
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'Available storelocation ',
         data: storelocation
     });
 });
@@ -43,7 +45,8 @@ const getstoreLocationController = asyncHandler(async(req, res, next) => {
         return next(new ErrorResponse('oops! there is no stored addresses', 404));
     }
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'Available storelocation ',
         data: storelocation
     });
 });
@@ -57,7 +60,8 @@ const updatestoreLocationController = asyncHandler(async(req, res, next) => {
         return next(new ErrorResponse('oops! there is no stored addresses', 404))
     }
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'storelocation updated successfully',
         data: storelocation
     });
 });
@@ -71,7 +75,8 @@ const deletestoreLocationController = asyncHandler(async(req, res, next) => {
     await StoreLocation.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: 'storelocation deleted successfully',
         data: {}
     });
 });

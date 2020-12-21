@@ -17,7 +17,8 @@ const createOrderController = asyncHandler(async(req, res, next) => {
     orders = await Order.create(req.body);
 
     res.status(201).json({
-        success: true,
+        status: 'success',
+        message: ' order created successfully',
         data: orders
     });
 
@@ -43,7 +44,8 @@ const getOrderController = asyncHandler(async(req, res, next) => {
 
     }
     res.status(200).json({
-        success: true,
+        status: 'success',
+        message: ' Available orders',
         data: orders
     });
 });

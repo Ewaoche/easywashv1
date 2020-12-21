@@ -29,7 +29,8 @@ const createComplainController = asyncHandler(async(req, res, next) => {
 
     }
     return res.status(200).json({
-        sucess: true,
+        status: 'success',
+        message: ' complain created successfully',
         data: complains
 
 
