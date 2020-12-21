@@ -17,7 +17,8 @@ const getVendorsController = asyncHandler(async(req, res, next) => {
         return next(new ErrorResponse('sorry there is no vendor with such adress', 404));
     }
     res.status(200).json({
-        sucess: true,
+        status: 'success',
+        message: 'available vendors',
         data: vendors,
         number: vendors.length
     });
