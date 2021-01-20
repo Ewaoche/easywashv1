@@ -1,9 +1,9 @@
-const asyncHandler = require('../middleware/async');
+const asyncHandler = require('../../middleware/async');
 // const Order = require('../../models/Order');
 const OrderRepository = require('../../controllers/order/OrderRepository');
 const PricingRepository = require('../../controllers/pricing/PricingRepository');
 // const Pricing = require('../../models/Pricing');
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../../utils/errorResponse');
 
 const createOrderController = asyncHandler(async(req, res, next) => {
 

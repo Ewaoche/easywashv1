@@ -1,8 +1,8 @@
 // const Complain = require('../../models/Complain');
 const ComplainRepository = require('./ComplainRepository');
 const User = require('../../models/User');
-const asyncHandler = require('../middleware/async');
-const ErrorResponse = require('../utils/errorResponse');
+const asyncHandler = require('../../middleware/async');
+const ErrorResponse = require('../../utils/errorResponse');
 const Order = require('../../models/Order');
 
 
