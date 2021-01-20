@@ -1,6 +1,5 @@
-const asyncHandler = require('../middleware/async');
-
-const ErrorResponse = require('../utils/errorResponse');
+const asyncHandler = require('../../middleware/async');
+const ErrorResponse = require('../../utils/errorResponse');
 // const Review = require('../../models/Review');
 const ReviewRepository = require('../../controllers/review/ReviewRepository');
 const User = require('../../models/User');
