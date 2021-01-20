@@ -27,7 +27,7 @@ const protect = asyncHandler(async(req, res, next) => {
         req.user = await User.findById(decoded.id);
         next();
     } catch (err) {
-        return next(new ErrorResponse('You are not Authorized for this route', 401));
+        next(new ErrorResponse('You are not Authorized for this route', 401));
 
     }
 });

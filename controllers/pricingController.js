@@ -1,6 +1,7 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
-const Pricing = require('../models/Pricing');
+// const Pricing = require('../models/Pricing');
+const PricingRepository = require('./PricingRepository');
 const User = require('../models/User');
 
 
@@ -43,10 +44,10 @@ const createPricingController = asyncHandler(async(req, res, next) => {
 const getAllPricingController = asyncHandler(async(req, res, next) => {
     let query;
     if (req.params.vendorId) {
-        query = Pricing.find({ vendor: req.params.vendorId });
+        query = PricingRepository.find({ vendor: req.params.vendorId });
 
     } else {
-        query = Pricing.find();
+        query = PricingRepository.find();
     }
     const prices = await query;
     return res.status(200).json({
@@ -62,7 +63,7 @@ const getAllPricingController = asyncHandler(async(req, res, next) => {
 // @Access Private/Vendor
 
 const getPricingController = asyncHandler(async(req, res, next) => {
-    let pricing = await Pricing.findById(req.params.id);
+    let pricing = await PricingRepository.findById(req.params.id);
     if (!pricing) {
         return next(new ErrorResponse('there is no pricing with the id', 404));
     };
