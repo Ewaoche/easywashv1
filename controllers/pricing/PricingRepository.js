@@ -1,5 +1,5 @@
-const Repository = require('../Repository');
-const Pricing = require('../models/Pricing');
+const Repository = require('../../Repository');
+const Pricing = require('../../models/Pricing');
 
 class PricingRepository extends Repository {
     constructor() {

@@ -4,17 +4,17 @@ const { protect } = require('../middleware/auth');
 
 
 //Load controllers
-const { createPricingController, getAllPricingController, getPricingController, updatePricingController, deletePricingController } = require('../controllers/pricingController');
+const { createPricingController, getAllPricingController, getPricingController, updatePricingController, deletePricingController } = require('../controllers/pricing/pricingController');
 
 router.route('/')
     .post(protect, createPricingController)
-    .get(
-        getAllPricingController);
+    .get(getAllPricingController);
+
 
 router.route('/:id')
     .get(getPricingController)
-    .put(updatePricingController)
-    .delete(deletePricingController);
+    .put(protect, updatePricingController)
+    .delete(protect, deletePricingController);
 
 
 

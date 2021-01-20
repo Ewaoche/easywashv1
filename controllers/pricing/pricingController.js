@@ -1,8 +1,8 @@
-const asyncHandler = require('../middleware/async');
-const ErrorResponse = require('../utils/errorResponse');
+const asyncHandler = require('../../middleware/async');
+const ErrorResponse = require('../../utils/errorResponse');
 // const Pricing = require('../models/Pricing');
-const PricingRepository = require('./PricingRepository');
-const User = require('../models/User');
+const PricingRepository = require('../pricing/PricingRepository');
+const User = require('../../models/User');
 
 
 // @desc      Add pricing
@@ -18,7 +18,7 @@ const createPricingController = asyncHandler(async(req, res, next) => {
         return next(new ErrorResponse(`there is no such vendor with the id ${vendorId}`, 404));
     }
 
-    const pricing = await Pricing.create({
+    const pricing = await PricingRepository.create({
         itemName,
         description,
         estimatedTime,
@@ -80,7 +80,7 @@ const getPricingController = asyncHandler(async(req, res, next) => {
 //@route PUT /api/v1/dashboard/pricing/:id
 // @Access Private/Vendor
 const updatePricingController = asyncHandler(async(req, res, next) => {
-    const pricing = await Pricing.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const pricing = await PricingRepository.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
     res.status(200).json({
         status: 'success',
@@ -94,7 +94,7 @@ const updatePricingController = asyncHandler(async(req, res, next) => {
 //@route DELETE /api/v1/dashboard/pricing/:id
 // @Access Private/Vendor
 const deletePricingController = asyncHandler(async(req, res, next) => {
-    await Pricing.findByIdAndDelete(req.params.id);
+    await PricingRepository.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
         status: 'success',
