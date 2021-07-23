@@ -48,7 +48,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 //Enable Cors
-app.use(cors());
+
 
 //Prevent http param pollution
 app.use(hpp());
@@ -59,6 +59,7 @@ app.use(fileupload());
 //Set Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
 //Routes files
 const authRoute = require('./routes/auth.route');
 
