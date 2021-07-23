@@ -30,6 +30,10 @@ connectDB();
 //create app
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+
+const server = app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
+
 //Set security header
 app.use(helmet());
 
@@ -48,7 +52,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 //Enable Cors
-
+app.use(cors());
 
 //Prevent http param pollution
 app.use(hpp());
@@ -58,7 +62,6 @@ app.use(hpp());
 app.use(fileupload());
 //Set Static folder
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 //Routes files
 const authRoute = require('./routes/auth.route');
@@ -89,8 +92,7 @@ if (process.env.NODE_ENV === 'development') {
 };
 
 
-//handle cors
-app.use(cors());
+
 
 //Mount the routers
 app.use('/api/v1/auth', authRoute);
@@ -111,9 +113,7 @@ app.use('/api/v1/reviews', reviewRoute);
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
 
-const server = app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
 
 //handle unhandled rejections
 process.on('unhandledRejection', (err, promise) => {
