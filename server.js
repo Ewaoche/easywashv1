@@ -59,7 +59,7 @@ app.use(fileupload());
 //Set Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(cors());
+
 //Routes files
 const authRoute = require('./routes/auth.route');
 
@@ -89,7 +89,8 @@ if (process.env.NODE_ENV === 'development') {
 };
 
 
-
+//handle cors
+app.use(cors());
 
 //Mount the routers
 app.use('/api/v1/auth', authRoute);
