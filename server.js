@@ -16,7 +16,7 @@ const fileupload = require('express-fileupload');
 
 
 //logger 
-const morgan = require('morgan');
+const morgan = require('morgan')
 
 
 
